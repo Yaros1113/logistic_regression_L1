@@ -3,14 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Загрузка данных
-df = pd.read_csv('data/data.csv')
-
-# Общая информация о типах данных
-print("\nИнформация о типах данных:")
-print(df.info())
-
-
 def exploratory_data_analysis(df, target_column=None):
     """
     Полный первичный анализ данных
@@ -22,10 +14,6 @@ def exploratory_data_analysis(df, target_column=None):
     # Базовая информация
     print(f"Размер данных: {df.shape}")
     print(f"Объекты: {df.shape[0]}, Признаки: {df.shape[1]}")
-    
-    # Типы данных
-    print("\nТИПЫ ДАННЫХ:")
-    print(df.dtypes.value_counts())
     
     # Пропущенные значения
     print("\nПРОПУЩЕННЫЕ ЗНАЧЕНИЯ:")
@@ -50,9 +38,6 @@ def exploratory_data_analysis(df, target_column=None):
     if duplicates_count > 0:
         print("Примеры дубликатов:")
         print(df[df.duplicated()].head())
-        
-        # Удаление дубликатов ???
-        # df = df.drop_duplicates()
     
     # Баланс классов (если указана целевая переменная)
     if target_column and target_column in df.columns:
@@ -72,33 +57,14 @@ def exploratory_data_analysis(df, target_column=None):
         print(f"\nОПИСАТЕЛЬНАЯ СТАТИСТИКА ({len(numeric_columns)} числовых признаков):")
         print(df[numeric_columns].describe())
 
-    # Выбросы
-    print("\nВЫБРОСЫ ПО ПРИЗНАКАМ (метод IQR):")
-    for col in numeric_columns:
-        outliers = find_outliers_iqr(df[col])
-        if len(outliers) > 0:
-            print(f"{col}: {len(outliers)} выбросов ({len(outliers)/len(df)*100:.2f}%)")
-
-    # Визуализация выбросов
-    plt.figure(figsize=(12, 6))
-    df[numeric_columns].boxplot()
-    plt.title('Визуализация выбросов')
-    plt.xticks(rotation=45)
-    plt.show()
-    
     return df
 
-# Поиск выбросов с помощью IQR
-def find_outliers_iqr(column):
-    Q1 = column.quantile(0.25)
-    Q3 = column.quantile(0.75)
-    IQR = Q3 - Q1
-    lower_bound = Q1 - 1.5 * IQR
-    upper_bound = Q3 + 1.5 * IQR
-    outliers = column[(column < lower_bound) | (column > upper_bound)]
-    return outliers
+# Загрузка сырых данных
+df = pd.read_csv('data/data.csv')
 
+exploratory_data_analysis(df, 'target')
+input("\nВведите что-нибудь, что бы увидеть анализ обработанных данных")
 
-
-input("\nВведите что-нибудь")
+# Загрузка обработанных данных
+df = pd.read_csv('data/update.csv')
 exploratory_data_analysis(df, 'target')
